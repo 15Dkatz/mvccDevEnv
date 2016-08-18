@@ -1,6 +1,7 @@
-body {
-  background-color: 'black';
-  padding: 10em;
-  border: 1px;
-  border-color: 'black'
+.ReactCodeMirror {
+  border: 5px solid black;
+}
+
+.reactCodeMirror textarea {
+  border: 5px solid black;
 }

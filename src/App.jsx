@@ -1,22 +1,22 @@
+// auto-complete codeMirror
+
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 import Codemirror from 'react-codemirror';
+import AppState from './AppState';
 require('codemirror/mode/javascript/javascript');
 
 @observer
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      code: '// Start coding here!'
-    }
+    this.updateCode = this.updateCode.bind(this);
   }
 
   updateCode(code) {
-    this.setState({
-      code
-    })
+    console.log('code', code);
+    this.props.appState.updateCode(code);
   }
 
   interact(cm) {
@@ -31,16 +31,13 @@ class App extends Component {
 
     return (
       <div>
-        <DevTools />
-        {/*<button onClick={this.onReset}>
-          Seconds passed: {this.props.appState.timer}
-        </button>*/}
         <Codemirror
-          value={this.state.code}
+          value={this.props.appState.code}
           onChange={this.updateCode}
           options={options}
           interact = {this.interact}
         />
+        <DevTools />
       </div>
     );
   }
