@@ -1,5 +1,8 @@
-// auto-complete codeMirror
+// TO-DO:
+// wrap the processing canvas
 
+
+// IDEAS:
 // add theme options for the editor
 
 
@@ -15,7 +18,7 @@ import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
 
 import 'brace/theme/github';
-// solarized_dark, solarized_light, twilight,
+// THEMES: solarized_dark, solarized_light, twilight, and more
 
 
 @observer
@@ -36,15 +39,6 @@ class App extends Component {
   }
 
   render() {
-    let options = {
-      lineNumbers: true,
-      mode: 'javascript',
-      gutters: ["CodeMirror-lint-markers"],
-      tabSize: 2,
-      indentWithTabs: true,
-      lint: true
-    };
-
     return (
       <div>
         <AceEditor
