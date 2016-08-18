@@ -1,5 +1,4 @@
 // auto-complete codeMirror
-
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
@@ -15,7 +14,6 @@ class App extends Component {
   }
 
   updateCode(code) {
-    console.log('code', code);
     this.props.appState.updateCode(code);
   }
 
@@ -26,7 +24,9 @@ class App extends Component {
   render() {
     let options = {
       lineNumbers: true,
-      mode: 'javascript'
+      mode: 'javascript',
+      tabSize: 2,
+      indentWithTabs: true
     };
 
     return (
