@@ -1,15 +1,22 @@
 // auto-complete codeMirror
 
-// add theme options for the ditor
+// add theme options for the editor
+
+
+// make a console section...
+
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 import AppState from './AppState';
 
-import Codemirror from 'react-codemirror';
-import 'codemirror/mode/javascript/javascript';
+import brace from 'brace';
+import AceEditor from 'react-ace';
+import 'brace/mode/javascript';
 
-const CodeMirror = require('codemirror');
+import 'brace/theme/github';
+// solarized_dark, solarized_light, twilight,
+
 
 @observer
 class App extends Component {
@@ -18,21 +25,9 @@ class App extends Component {
     this.updateCode = this.updateCode.bind(this);
   }
 
-  // componentDidMount() {
-  //   let self = this;
-  //
-  //   this.codemirror = CodeMirror(React.findDOMNode().querySelector('.editor-codemirror'), {
-  //     lineNumbers: true,
-  //     mode: 'javascript',
-  //     lint: function(text, options, cm) {
-  //         let linter = cm.getHelper(CodeMirror.Pos(0, 0), 'lint');
-  //         return linter(text, options);
-  //       },
-  //     gutters: ['CodeMirror-lint-markers']
-  //   })
-  // }
 
   updateCode(code) {
+    console.log('mobX code', code);
     this.props.appState.updateCode(code);
   }
 
@@ -52,11 +47,16 @@ class App extends Component {
 
     return (
       <div>
-        <Codemirror
-          value={this.props.appState.code}
+        <AceEditor
+          mode="javascript"
+          theme='github'
           onChange={this.updateCode}
-          options={options}
-          interact = {this.interact}
+          name="pjs_editor"
+          setOptions={{
+            // would this be helpful?
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: false
+          }}
         />
         <DevTools />
       </div>
