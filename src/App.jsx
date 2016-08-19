@@ -4,6 +4,8 @@
 
 // IDEAS:
 // add theme options for the editor
+// can we use flexBox?
+// add autoCompletion option
 
 
 // make a console section...
@@ -16,10 +18,10 @@ import AppState from './AppState';
 import brace from 'brace';
 import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
-
 import 'brace/theme/github';
 // THEMES: solarized_dark, solarized_light, twilight, and more
 
+import {Button} from 'react-bootstrap';
 
 @observer
 class App extends Component {
@@ -38,20 +40,32 @@ class App extends Component {
     console.log(cm.getValue());
   }
 
+  save() {
+    console.log('outwrite edited.pde with code')
+  }
+
   render() {
     return (
-      <div>
+      <div className="row">
         <AceEditor
           mode="javascript"
           theme='github'
+          placeholder='// Start coding here...'
           onChange={this.updateCode}
-          name="pjs_editor"
-          setOptions={{
-            // would this be helpful?
-            enableBasicAutocompletion: true,
-            enableLiveAutocompletion: false
-          }}
+          value={this.props.appState.code}
+          name="pjs-editor"
+          //would auto-completion help?
+          //enableBasicAutocompletion={true}
+          //enableLiveAutocompletion={true}
         />
+        <Button
+          bsStyle="success"
+          bsSize="small"
+          onClick={this.save}
+        >
+          Save and Run
+        </Button>
+        <canvas id="pjs-canvas"></canvas>
         <DevTools />
       </div>
     );

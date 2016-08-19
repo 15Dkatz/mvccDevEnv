@@ -2,12 +2,16 @@
   <head>
     <title>Todo App</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="node_modules/codemirror/lib/codemirror.css">
     <link rel="stylesheet" type="text/css" href="node_modules/codemirror/addon/lint/lint.css">
   </head>
   <body class="container">
+    <script src="processing.js"></script>
     <div id="root"></div>
     <script src="/static/bundle.js"></script>
+    <scipt type='text/processing' data-processing target=pjs-canvas src='/static/edited.pde'>
+    </script>
   </body>
 </html>
 
