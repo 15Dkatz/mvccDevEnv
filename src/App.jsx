@@ -23,11 +23,15 @@ import 'brace/theme/github';
 
 import {Button} from 'react-bootstrap';
 
+//requiring process
+require('../processing.js');
+
 @observer
 class App extends Component {
   constructor(props) {
     super(props)
     this.updateCode = this.updateCode.bind(this);
+    this.save = this.save.bind(this);
   }
 
 
@@ -41,7 +45,13 @@ class App extends Component {
   }
 
   save() {
-    console.log('outwrite edited.pde with code')
+    console.log('outwrite edited.pde with code');
+    let code = this.props.appState.code;
+    let processingCode = Processing.compile(code).sourceCode;
+    let canvas = document.getElementById("pjs-canvas");
+    let processingInstance = new Processing(canvas, processingCode);
+    console.log('processingInstance', processingInstance);
+    // console.log('processingCode', processingCode);
   }
 
   render() {
@@ -65,7 +75,7 @@ class App extends Component {
         >
           Save and Run
         </Button>
-        <canvas id="pjs-canvas"></canvas>
+        <canvas id="pjs-canvas" data-processing-sources="anything.pde"></canvas>
         <DevTools />
       </div>
     );
