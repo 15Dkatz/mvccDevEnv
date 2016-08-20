@@ -34,9 +34,7 @@ class App extends Component {
     this.save = this.save.bind(this);
   }
 
-
   updateCode(code) {
-    console.log('mobX code', code);
     this.props.appState.updateCode(code);
   }
 
@@ -44,14 +42,16 @@ class App extends Component {
     console.log(cm.getValue());
   }
 
+  sketchProc(processing) {
+    processing.draw = () => {
+      processing.background(224);
+    }
+  }
+
   save() {
-    console.log('outwrite edited.pde with code');
     let code = this.props.appState.code;
-    let processingCode = Processing.compile(code).sourceCode;
     let canvas = document.getElementById("pjs-canvas");
-    let processingInstance = new Processing(canvas, processingCode);
-    console.log('processingInstance', processingInstance);
-    // console.log('processingCode', processingCode);
+    let processingInstance = new Processing(canvas, code);
   }
 
   render() {
@@ -65,8 +65,6 @@ class App extends Component {
           value={this.props.appState.code}
           name="pjs-editor"
           //would auto-completion help?
-          //enableBasicAutocompletion={true}
-          //enableLiveAutocompletion={true}
         />
         <Button
           bsStyle="success"
@@ -75,14 +73,10 @@ class App extends Component {
         >
           Save and Run
         </Button>
-        <canvas id="pjs-canvas" data-processing-sources="anything.pde"></canvas>
+        <canvas id="pjs-canvas"></canvas>
         <DevTools />
       </div>
     );
-  }
-
-  onReset = () => {
-    this.props.appState.resetTimer();
   }
 };
 
