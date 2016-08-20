@@ -56,25 +56,32 @@ class App extends Component {
 
   render() {
     return (
-      <div className="row">
-        <AceEditor
-          mode="javascript"
-          theme='github'
-          placeholder='// Start coding here...'
-          onChange={this.updateCode}
-          value={this.props.appState.code}
-          name="pjs-editor"
-          //would auto-completion help?
-        />
+      <div>
         <Button
           bsStyle="success"
           bsSize="small"
           onClick={this.save}
+          className="col-xs-offset-5"
         >
           Save and Run
         </Button>
-        <canvas id="pjs-canvas"></canvas>
         <DevTools />
+        <div className="row between-xs">
+          <AceEditor
+            mode="javascript"
+            theme='github'
+            placeholder='// Start coding here...'
+            onChange={this.updateCode}
+            value={this.props.appState.code}
+            name="pjs-editor"
+            height="100vh"
+            className="col-xs"
+            fontSize="15px"
+          />
+          <div className='pjs-space'>
+            <canvas id="pjs-canvas" className="col-xs"></canvas>
+          </div>
+        </div>
       </div>
     );
   }

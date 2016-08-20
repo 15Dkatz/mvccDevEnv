@@ -1,7 +1,7 @@
 import { observable, action } from 'mobx';
 
 class AppState {
-  @observable code = '// Start coding here! \n size(500,500);';
+  @observable code = '// Start coding here! \nsize(500,500);';
   @action updateCode(newCode) {
     this.code = newCode;
   }
