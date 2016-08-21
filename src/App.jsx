@@ -32,10 +32,8 @@ class App extends Component {
     super(props)
 
     this.state = {
-      width_left: `${document.body.clientWidth/2}%`,
-      width_right: `${document.body.clientWidth/2}%`
-      // width_left: '40vh',
-      // width_right: '60vh'
+      width_pjs_editor: `${document.body.clientWidth/2}px`,
+      width_pjs_space: `${document.body.clientWidth/2}px`
     }
 
     this.updateCode = this.updateCode.bind(this);
@@ -65,12 +63,15 @@ class App extends Component {
 
   drag(ev) {
     console.log('ev', ev);
-    let width_left = (ev.screenX/document.getElementById('workspace').clientWidth)*100;
-    let width_right = 100-width_left;
-    width_left = `${width_left}vw`;
-    width_right = `${width_right}vw`;
-    console.log('width_left', width_left, 'width_right', width_right);
-    this.setState({width_left, width_right});
+    let width_workspace = document.getElementById('workspace').clientWidth;
+    let width_pjs_editor = document.getElementById('pjs-editor').clientWidth;
+    let width_pjs_space = document.getElementById('pjs-space').clientWidth;
+    console.log('width_workspace', width_workspace, 'width_pjs_editor', width_pjs_editor, 'width_pjs_space', width_pjs_space);
+    // width_pjs_editor = ev.screenX;
+    width_pjs_space = width_workspace - ev.screenX;
+    // width_pjs_editor = `${width_pjs_editor}px`;
+    width_pjs_space = `${width_pjs_space}px`;
+    this.setState({width_pjs_space});
   }
 
   render() {
@@ -98,8 +99,9 @@ class App extends Component {
             onChange={this.updateCode}
             value={this.props.appState.code}
             name='pjs-editor'
+            id='pjs-editor'
             height='100%'
-            width={this.state.width_left}
+            width={this.state.width_pjs_editor}
             fontSize={15}
             editorProps={{$blockScrolling: true}}
           />
@@ -113,8 +115,9 @@ class App extends Component {
             </div>
           </Draggable>*/}
           <div
+            id='pjs-space'
             className='borderLeft'
-            style={Object.assign({}, styles.centerContainer, {width: this.state.width_right})}
+            style={Object.assign({}, styles.centerContainer, {width: this.state.width_pjs_space})}
           >
             <canvas id="pjs-canvas"
             ></canvas>
