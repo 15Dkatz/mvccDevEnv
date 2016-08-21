@@ -20,7 +20,10 @@ import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
 import 'brace/theme/github';
 // THEMES: solarized_dark, solarized_light, twilight, and more
-//requiring process
+// requiring process
+import Draggable from 'react-draggable';
+
+// make sure editor runs work with all pjs repos
 require('../processing.js');
 
 @observer
@@ -29,12 +32,15 @@ class App extends Component {
     super(props)
 
     this.state = {
-      width: 500,
-      height: 500
+      width_left: `${document.body.clientWidth/2}%`,
+      width_right: `${document.body.clientWidth/2}%`
+      // width_left: '40vh',
+      // width_right: '60vh'
     }
 
     this.updateCode = this.updateCode.bind(this);
     this.save = this.save.bind(this);
+    this.drag = this.drag.bind(this);
   }
 
   updateCode(code) {
@@ -57,9 +63,14 @@ class App extends Component {
     let processingInstance = new Processing(canvas, code);
   }
 
-  onResize(event, {element, size}) {
-    let {width, height} = size;
-    this.setState({width, height})
+  drag(ev) {
+    console.log('ev', ev);
+    let width_left = (ev.screenX/document.getElementById('workspace').clientWidth)*100;
+    let width_right = 100-width_left;
+    width_left = `${width_left}vw`;
+    width_right = `${width_right}vw`;
+    console.log('width_left', width_left, 'width_right', width_right);
+    this.setState({width_left, width_right});
   }
 
   render() {
@@ -77,28 +88,35 @@ class App extends Component {
         </div>
         <DevTools />
         <div
-          className="border"
+          id='workspace'
+          className='border'
           style={styles.row}
           >
           <AceEditor
-            mode="javascript"
+            mode='javascript'
             theme='github'
             onChange={this.updateCode}
             value={this.props.appState.code}
-            name="pjs-editor"
+            name='pjs-editor'
             height='100%'
-            width='50%'
+            width={this.state.width_left}
             fontSize={15}
             editorProps={{$blockScrolling: true}}
-            className='ace-editor half'
           />
+          {/*<Draggable
+            onDrag={this.drag}
+            axis='x'
+          >
+            <div
+              className='dragger'
+            >
+            </div>
+          </Draggable>*/}
           <div
-            id='pjs-space'
-            className='half'
-            style={styles.centerContainer}
+            className='borderLeft'
+            style={Object.assign({}, styles.centerContainer, {width: this.state.width_right})}
           >
             <canvas id="pjs-canvas"
-              className='border'
             ></canvas>
           </div>
         </div>
@@ -124,7 +142,7 @@ const styles = {
   centerContainer: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   }
 }
 
