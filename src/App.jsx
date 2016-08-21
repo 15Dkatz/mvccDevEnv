@@ -21,7 +21,7 @@ import 'brace/mode/javascript';
 import 'brace/theme/github';
 // THEMES: solarized_dark, solarized_light, twilight, and more
 // requiring process
-import Draggable from 'react-draggable';
+import DraggableCore from 'react-draggable';
 
 // make sure editor runs work with all pjs repos
 require('../processing.js');
@@ -61,17 +61,21 @@ class App extends Component {
     let processingInstance = new Processing(canvas, code);
   }
 
+
   drag(ev) {
-    console.log('ev', ev);
-    let width_workspace = document.getElementById('workspace').clientWidth;
+    console.log('ev.screenY', ev.screenY);
+    let width_workspace = document.body.clientWidth;
     let width_pjs_editor = document.getElementById('pjs-editor').clientWidth;
     let width_pjs_space = document.getElementById('pjs-space').clientWidth;
+    width_pjs_editor = ev.screenX;
+    width_pjs_space = width_workspace - width_pjs_editor;
     console.log('width_workspace', width_workspace, 'width_pjs_editor', width_pjs_editor, 'width_pjs_space', width_pjs_space);
-    // width_pjs_editor = ev.screenX;
-    width_pjs_space = width_workspace - ev.screenX;
-    // width_pjs_editor = `${width_pjs_editor}px`;
-    width_pjs_space = `${width_pjs_space}px`;
-    this.setState({width_pjs_space});
+    if (width_pjs_space!=0 && width_pjs_editor!=0) {
+      this.setState({
+        width_pjs_space: `${width_pjs_space}px`,
+        width_pjs_editor: `${width_pjs_editor}px`
+      })
+    }
   }
 
   render() {
@@ -105,15 +109,12 @@ class App extends Component {
             fontSize={15}
             editorProps={{$blockScrolling: true}}
           />
-          {/*<Draggable
+          <div
+            draggable={true}
             onDrag={this.drag}
-            axis='x'
+            className='dragger'
           >
-            <div
-              className='dragger'
-            >
-            </div>
-          </Draggable>*/}
+          </div>
           <div
             id='pjs-space'
             className='borderLeft'
