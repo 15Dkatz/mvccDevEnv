@@ -1,1 +1,19 @@
+.border {
+  border: 1px solid black
+}
 
+.half {
+  width: 50%
+}
+
+.ace-editor {
+  border-right: 1px solid black;
+}
+
+.button-save {
+  border-radius: 2px;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  font-size: 22px;
+  padding: 5px;
+  margin: 2px;
+}

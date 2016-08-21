@@ -20,9 +20,6 @@ import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
 import 'brace/theme/github';
 // THEMES: solarized_dark, solarized_light, twilight, and more
-
-import {Button} from 'react-bootstrap';
-
 //requiring process
 require('../processing.js');
 
@@ -30,6 +27,12 @@ require('../processing.js');
 class App extends Component {
   constructor(props) {
     super(props)
+
+    this.state = {
+      width: 500,
+      height: 500
+    }
+
     this.updateCode = this.updateCode.bind(this);
     this.save = this.save.bind(this);
   }
@@ -54,37 +57,75 @@ class App extends Component {
     let processingInstance = new Processing(canvas, code);
   }
 
+  onResize(event, {element, size}) {
+    let {width, height} = size;
+    this.setState({width, height})
+  }
+
   render() {
     return (
       <div>
-        <Button
-          bsStyle="success"
-          bsSize="small"
-          onClick={this.save}
-          className="col-xs-offset-5"
+        <div
+          style={styles.header}
         >
-          Save and Run
-        </Button>
+          <div
+            onClick={this.save}
+            className="button-save border"
+          >
+            Save and Run
+          </div>
+        </div>
         <DevTools />
-        <div className="row between-xs">
+        <div
+          className="border"
+          style={styles.row}
+          >
           <AceEditor
             mode="javascript"
             theme='github'
-            placeholder='// Start coding here...'
             onChange={this.updateCode}
             value={this.props.appState.code}
             name="pjs-editor"
-            height="100vh"
-            className="col-xs"
-            fontSize="15px"
+            height='100%'
+            width='50%'
+            fontSize={15}
+            editorProps={{$blockScrolling: true}}
+            className='ace-editor half'
           />
-          <div className='pjs-space'>
-            <canvas id="pjs-canvas" className="col-xs"></canvas>
+          <div
+            id='pjs-space'
+            className='half'
+            style={styles.centerContainer}
+          >
+            <canvas id="pjs-canvas"
+              className='border'
+            ></canvas>
           </div>
         </div>
       </div>
     );
   }
 };
+
+const styles = {
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '98.5vw'
+  },
+
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '98.5vw'
+  },
+
+  centerContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+}
 
 export default App;
