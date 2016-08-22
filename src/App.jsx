@@ -21,7 +21,8 @@ import 'brace/mode/javascript';
 import 'brace/theme/github';
 // THEMES: solarized_dark, solarized_light, twilight, and more
 // requiring process
-import DraggableCore from 'react-draggable';
+
+import SplitPane from 'react-split-pane/lib/SplitPane';
 
 // make sure editor runs work with all pjs repos
 require('../processing.js');
@@ -31,9 +32,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.save = this.save.bind(this);
-    this.drag = this.drag.bind(this);
   }
-
 
   interact(cm) {
     console.log(cm.getValue());
@@ -48,25 +47,16 @@ class App extends Component {
   save() {
     let code = this.props.appState.code;
     let canvas = document.getElementById("pjs-canvas");
-
-    // catch JS defined processing instances here and convert to js code
-
     let processingInstance = new Processing(canvas, code);
   }
 
 
-  drag(ev) {
-    console.log('ev.screenX', ev.screenX);
-    console.log('document.getElementById(dragger)', document.getElementById('dragger'));
-    // let width_workspace = document.body.clientWidth;
-    // let width_pjs_editor = ev.screenX * 0.91459627;
-    // let width_pjs_space = width_workspace - width_pjs_editor;
-    // this.props.appState.updateWidths(width_pjs_editor, width_pjs_space);
-  }
-
   render() {
     return (
-      <div>
+      <div style={{
+        flex: '1'
+      }}>
+        <DevTools />
         <div
           style={styles.header}
         >
@@ -77,12 +67,16 @@ class App extends Component {
             Save and Run
           </div>
         </div>
-        <DevTools />
-        <div
-          id='workspace'
-          className='border'
-          style={styles.row}
-          >
+        <SplitPane
+          split='vertical'
+          className="border"
+          defaultSize="50%"
+          minSize={75}
+          maxSize={-75}
+          style={{
+            width: `${document.body.clientWidth}px`,
+          }}
+        >
           <AceEditor
             mode='javascript'
             theme='github'
@@ -91,25 +85,21 @@ class App extends Component {
             name='pjs-editor'
             id='pjs-editor'
             height='90vh'
-            width={`${this.props.appState.width_pjs_editor}px`}
+            width='inherit'
             fontSize={15}
             editorProps={{$blockScrolling: true}}
           />
           <div
-            draggable={true}
-            onDrag={this.drag}
-            id='dragger'
-          >
-          </div>
-          <div
             id='pjs-space'
-            className='borderLeft'
-            style={Object.assign({}, styles.centerContainer, {width: `${this.props.appState.width_pjs_space}px`})}
+            style={styles.centerContainer}
+            width='inherit'
           >
-            <canvas id="pjs-canvas"
-            ></canvas>
+            <canvas
+              id="pjs-canvas"
+            >
+            </canvas>
           </div>
-        </div>
+        </SplitPane>
       </div>
     );
   }
@@ -131,9 +121,9 @@ const styles = {
 
   centerContainer: {
     display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
-  },
+    paddingLeft: '5px'
+  }
 }
 
 export default App;
