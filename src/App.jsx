@@ -30,20 +30,10 @@ require('../processing.js');
 class App extends Component {
   constructor(props) {
     super(props)
-
-    this.state = {
-      width_pjs_editor: `${document.body.clientWidth/2}px`,
-      width_pjs_space: `${document.body.clientWidth/2}px`
-    }
-
-    this.updateCode = this.updateCode.bind(this);
     this.save = this.save.bind(this);
     this.drag = this.drag.bind(this);
   }
 
-  updateCode(code) {
-    this.props.appState.updateCode(code);
-  }
 
   interact(cm) {
     console.log(cm.getValue());
@@ -58,24 +48,20 @@ class App extends Component {
   save() {
     let code = this.props.appState.code;
     let canvas = document.getElementById("pjs-canvas");
+
+    // catch JS defined processing instances here and convert to js code
+
     let processingInstance = new Processing(canvas, code);
   }
 
 
   drag(ev) {
-    console.log('ev.screenY', ev.screenY);
-    let width_workspace = document.body.clientWidth;
-    let width_pjs_editor = document.getElementById('pjs-editor').clientWidth;
-    let width_pjs_space = document.getElementById('pjs-space').clientWidth;
-    width_pjs_editor = ev.screenX;
-    width_pjs_space = width_workspace - width_pjs_editor;
-    console.log('width_workspace', width_workspace, 'width_pjs_editor', width_pjs_editor, 'width_pjs_space', width_pjs_space);
-    if (width_pjs_space!=0 && width_pjs_editor!=0) {
-      this.setState({
-        width_pjs_space: `${width_pjs_space}px`,
-        width_pjs_editor: `${width_pjs_editor}px`
-      })
-    }
+    console.log('ev.screenX', ev.screenX);
+    console.log('document.getElementById(dragger)', document.getElementById('dragger'));
+    // let width_workspace = document.body.clientWidth;
+    // let width_pjs_editor = ev.screenX * 0.91459627;
+    // let width_pjs_space = width_workspace - width_pjs_editor;
+    // this.props.appState.updateWidths(width_pjs_editor, width_pjs_space);
   }
 
   render() {
@@ -100,25 +86,25 @@ class App extends Component {
           <AceEditor
             mode='javascript'
             theme='github'
-            onChange={this.updateCode}
+            onChange={(code) => this.props.appState.updateCode(code)}
             value={this.props.appState.code}
             name='pjs-editor'
             id='pjs-editor'
-            height='100%'
-            width={this.state.width_pjs_editor}
+            height='90vh'
+            width={`${this.props.appState.width_pjs_editor}px`}
             fontSize={15}
             editorProps={{$blockScrolling: true}}
           />
           <div
             draggable={true}
             onDrag={this.drag}
-            className='dragger'
+            id='dragger'
           >
           </div>
           <div
             id='pjs-space'
             className='borderLeft'
-            style={Object.assign({}, styles.centerContainer, {width: this.state.width_pjs_space})}
+            style={Object.assign({}, styles.centerContainer, {width: `${this.props.appState.width_pjs_space}px`})}
           >
             <canvas id="pjs-canvas"
             ></canvas>
@@ -134,20 +120,20 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '98.5vw'
+    width: '100vw'
   },
 
   row: {
     display: 'flex',
     flexDirection: 'row',
-    width: '98.5vw'
+    width: '100vw'
   },
 
   centerContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 }
 
 export default App;
