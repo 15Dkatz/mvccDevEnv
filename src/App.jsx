@@ -1,14 +1,14 @@
-// TO-DO:
-// wrap the processing canvas
-
-
 // IDEAS:
 // add theme options for the editor
-// can we use flexBox?
 // add autoCompletion option
+// make a console section for logging variables and state
 
 
-// make a console section...
+// Questions
+// on the PJS code
+// are we converting the pjs inherently to the js equivalent?
+// why does the draw function work on some repos? and w/o it on others?
+// do some inherently have the size(500, 500) line?
 
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
