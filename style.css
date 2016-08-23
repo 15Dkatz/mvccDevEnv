@@ -13,9 +13,10 @@
 
 .button-toggle {
   position: absolute;
-  bottom: 2px;
-  left: 2px;
+  top: -12px;
+  right: 2px;
   z-index: 4;
+  font-size: 30px;
 }
 
 /*pulled from online pane toggle source*/

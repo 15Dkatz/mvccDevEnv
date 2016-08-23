@@ -1,7 +1,9 @@
 // TASKS:
 // add suggestions to UI, and add collapsable panes to each section
 //  foldable panes: https://gist.github.com/Qt-dev/4ca4c41b8ec8f6c0bb27
+//    ADD blue highlights to foldable pane buttons when active
 // sections: [LessonExplorer][Editor][Editing space]
+
 
 // IDEAS:
 // add theme options for the editor
@@ -42,7 +44,7 @@ class App extends Component {
     this.state = {
       size: '50%',
       panes: [{open: true}, {open: true}],
-      prev_width: ''
+      prev_widths: []
     }
   }
 
@@ -58,25 +60,74 @@ class App extends Component {
     return newPanes;
   }
 
-  collapse(pane_num) {
 
-    //add width to previous pane
-    let pane = document.getElementsByClassName(`Pane${pane_num}`)[0];
-    console.log('attempting to collapse', pane);
-    pane_num -= 1; //necessary because react-split-pane numbers starting from 1 not 0...
-    if (this.state.panes[pane_num].open) {
-      this.setState({prev_width: pane.style.width});
-      pane.style.width = '0px';
-    } else {
-      pane.style.width = this.state.prev_width;
+  // BEAUTIFY this working but ugly method
+  // SHOULD work with added panes.
+  allTrue(panes) {
+    for (let i=0; i<panes.length; i++) {
+      if (panes[i].open == false) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    let panes = this.state.panes;
-    panes[pane_num].open = !panes[pane_num].open;
-    this.setState({
-      panes
-    })
+  collapse(pane_num) {
+    // limit changing to only occur of that pane is set to false.
+    pane_num -= 1; //necessary because react-split-pane numbers starting from 1 not 0...
+    if ((this.state.panes[pane_num].open == false) || this.allTrue(this.state.panes)) {
 
+      if (pane_num == 0) {
+        let pane = document.getElementsByClassName(`Pane${pane_num+1}`)[0];
+        if (this.state.panes[pane_num].open) {
+          let prev_widths = this.state.prev_widths;
+          prev_widths[pane_num] = pane.style.width;
+          this.setState({prev_widths});
+          pane.style.width = '4%';
+        } else {
+          pane.style.width = this.state.prev_widths[pane_num];
+        }
+      }
+      else if (pane_num == 1){
+        // double the size of the previous pane
+        let pane = document.getElementsByClassName(`Pane${pane_num}`)[0];
+        if (this.state.panes[pane_num].open) {
+          let prev_widths = this.state.prev_widths;
+          prev_widths[pane_num] = pane.style.width;
+          this.setState({prev_widths});
+          let cur_width = pane.clientWidth;
+          let add_width = document.getElementsByClassName(`Pane${pane_num+1}`)[0].clientWidth;
+          let new_width = `${cur_width+add_width}px`;
+          pane.style.width = `calc(${new_width} - 4%)`;
+        } else {
+          pane.style.width = this.state.prev_widths[pane_num];
+        }
+      }
+
+      console.log('panes state', this.state.panes);
+
+
+      let panes = this.state.panes;
+      if (panes[pane_num].open == true) {
+        panes[pane_num].open = false;
+      } else {
+        panes[pane_num].open = true;
+      }
+      this.setState({
+        panes
+      })
+    }
+  }
+
+  renderButton(id) {
+    return (
+      <div
+        className='button-toggle'
+        onClick={() => this.collapse(id)}
+      >
+        &#9705;
+      </div>
+    )
   }
 
   render() {
@@ -117,12 +168,7 @@ class App extends Component {
               fontSize={15}
               editorProps={{$blockScrolling: true}}
             />
-            <div
-              className='button-toggle'
-              onClick={() => this.collapse(1)}
-            >
-              &#9654;
-            </div>
+            {this.renderButton(1)}
           </div>
           <div>
             <div
@@ -135,12 +181,7 @@ class App extends Component {
               >
               </canvas>
             </div>
-            <div
-              className='button-toggle'
-              onClick={() => this.collapse(2)}
-            >
-              &#9654;
-            </div>
+            {this.renderButton(2)}
           </div>
         </SplitPane>
       </div>
