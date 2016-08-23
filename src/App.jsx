@@ -1,3 +1,8 @@
+// TASKS:
+// add suggestions to UI, and add collapsable panes to each section
+//  foldable panes: https://gist.github.com/Qt-dev/4ca4c41b8ec8f6c0bb27
+// sections: [LessonExplorer][Editor][Editing space]
+
 // IDEAS:
 // add theme options for the editor
 // add autoCompletion option
@@ -32,30 +37,51 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.save = this.save.bind(this);
-  }
-
-  interact(cm) {
-    console.log(cm.getValue());
-  }
-
-  sketchProc(processing) {
-    processing.draw = () => {
-      processing.background(224);
+    this.collapse = this.collapse.bind(this);
+    this.togglePanes = this.togglePanes.bind(this);
+    this.state = {
+      size: '50%',
+      panes: [{open: true}, {open: true}],
+      prev_width: ''
     }
   }
 
   save() {
     let code = this.props.appState.code;
-    let canvas = document.getElementById("pjs-canvas");
+    let canvas = document.getElementById("pjs_canvas");
     let processingInstance = new Processing(canvas, code);
   }
 
+  togglePanes(id) {
+    let newPanes = this.state.panes;
+    newPanes[id].open = !newPanes[id].open;
+    return newPanes;
+  }
+
+  collapse(pane_num) {
+
+    //add width to previous pane
+    let pane = document.getElementsByClassName(`Pane${pane_num}`)[0];
+    console.log('attempting to collapse', pane);
+    pane_num -= 1; //necessary because react-split-pane numbers starting from 1 not 0...
+    if (this.state.panes[pane_num].open) {
+      this.setState({prev_width: pane.style.width});
+      pane.style.width = '0px';
+    } else {
+      pane.style.width = this.state.prev_width;
+    }
+
+    let panes = this.state.panes;
+    panes[pane_num].open = !panes[pane_num].open;
+    this.setState({
+      panes
+    })
+
+  }
 
   render() {
     return (
-      <div style={{
-        flex: '1'
-      }}>
+      <div>
         <DevTools />
         <div
           style={styles.header}
@@ -70,34 +96,51 @@ class App extends Component {
         <SplitPane
           split='vertical'
           className="border"
-          defaultSize="50%"
+          defaultSize={this.state.size}
           minSize={75}
           maxSize={-75}
           style={{
-            width: `${document.body.clientWidth}px`,
+            width: '100vw',
           }}
         >
-          <AceEditor
-            mode='javascript'
-            theme='github'
-            onChange={(code) => this.props.appState.updateCode(code)}
-            value={this.props.appState.code}
-            name='pjs-editor'
-            id='pjs-editor'
-            height='90vh'
-            width='inherit'
-            fontSize={15}
-            editorProps={{$blockScrolling: true}}
-          />
-          <div
-            id='pjs-space'
-            style={styles.centerContainer}
-            width='inherit'
-          >
-            <canvas
-              id="pjs-canvas"
+          <div>
+            <AceEditor
+              mode='javascript'
+              theme='github'
+              onChange={(code) => this.props.appState.updateCode(code)}
+              value={this.props.appState.code}
+              name='pjs_editor'
+              id='pjs_editor'
+              className='sectionContent'
+              height='90vh'
+              width='inherit'
+              fontSize={15}
+              editorProps={{$blockScrolling: true}}
+            />
+            <div
+              className='button-toggle'
+              onClick={() => this.collapse(1)}
             >
-            </canvas>
+              &#9654;
+            </div>
+          </div>
+          <div>
+            <div
+              id='pjs_space'
+              style={styles.centerContainer}
+              width='inherit'
+            >
+              <canvas
+                id="pjs_canvas"
+              >
+              </canvas>
+            </div>
+            <div
+              className='button-toggle'
+              onClick={() => this.collapse(2)}
+            >
+              &#9654;
+            </div>
           </div>
         </SplitPane>
       </div>

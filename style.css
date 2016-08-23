@@ -11,7 +11,24 @@
   border: 1px solid #000
 }
 
-#pjs-canvas {
+.button-toggle {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  z-index: 4;
+}
+
+/*pulled from online pane toggle source*/
+.sectionContent {
+  overflow: hidden;
+  -webkit-transition: height 0.3s ease-in;
+  -moz-transition: height 0.3s ease-in;
+  -o-transition: height 0.3s ease-in;
+  -ms-transition: height 0.3s ease-in;
+  transition: height 0.3s ease-in;
+}
+
+#pjs_canvas {
   width: 100%;
   max-height: 70vh;
   max-width: 40vw;
