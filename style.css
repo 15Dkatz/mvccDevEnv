@@ -11,6 +11,10 @@
   border: 1px solid #000
 }
 
+.blue {
+  color: #0000ab;
+}
+
 .button-toggle {
   position: absolute;
   top: -12px;
@@ -19,14 +23,9 @@
   font-size: 30px;
 }
 
-/*pulled from online pane toggle source*/
-.sectionContent {
-  overflow: hidden;
-  -webkit-transition: height 0.3s ease-in;
-  -moz-transition: height 0.3s ease-in;
-  -o-transition: height 0.3s ease-in;
-  -ms-transition: height 0.3s ease-in;
-  transition: height 0.3s ease-in;
+.panes {
+  height: 90vh;
+  width: 98.75vw;
 }
 
 #pjs_canvas {
@@ -45,6 +44,20 @@
 
 .pane {
   width: 50vw;
+}
+
+
+
+
+/*EXTERNAL*/
+/*pulled from online pane toggle source*/
+.sectionContent {
+  overflow: hidden;
+  -webkit-transition: height 0.3s ease-in;
+  -moz-transition: height 0.3s ease-in;
+  -o-transition: height 0.3s ease-in;
+  -ms-transition: height 0.3s ease-in;
+  transition: height 0.3s ease-in;
 }
 
 *, *:before, *:after {

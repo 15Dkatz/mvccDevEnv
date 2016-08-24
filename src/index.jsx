@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import AppState from './AppState';
-import App from './App';
+import App from './App_test'; // later change back to './App'
 
 const appState = new AppState();
 
