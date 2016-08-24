@@ -158,6 +158,8 @@ class App extends Component {
           defaultSize='33.33%'
           split='vertical'
           height='100vh'
+          maxSize={-50}
+          minSize={50}
           className='border panes'
         >
           <div>
@@ -166,6 +168,8 @@ class App extends Component {
           </div>
           <SplitPane
             defaultSize='50%'
+            maxSize={-50}
+            minSize={50}
             split='vertical'
           >
             <div>

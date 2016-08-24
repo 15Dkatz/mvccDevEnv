@@ -16,6 +16,7 @@
 // are we converting the pjs inherently to the js equivalent?
 // why does the draw function work on some repos? and w/o it on others?
 // do some inherently have the size(500, 500) line?
+// Is it ok to mix MobX state and have localState?
 
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
@@ -40,10 +41,10 @@ class App extends Component {
     super(props)
     this.save = this.save.bind(this);
     this.collapse = this.collapse.bind(this);
-    this.togglePanes = this.togglePanes.bind(this);
     this.state = {
       size: '50%',
-      panes: [{open: true}, {open: true}],
+      // simply keeping track of all 3 panes
+      panes: [{open: true}, {open: true}, {open: true}],
       prev_widths: []
     }
   }
@@ -54,16 +55,9 @@ class App extends Component {
     let processingInstance = new Processing(canvas, code);
   }
 
-  togglePanes(id) {
-    let newPanes = this.state.panes;
-    newPanes[id].open = !newPanes[id].open;
-    return newPanes;
-  }
-
-
-  // BEAUTIFY this working but ugly method
+  // BEAUTIFY this working method
   // SHOULD work with added panes.
-  allTrue(panes) {
+  allOpen(panes) {
     for (let i=0; i<panes.length; i++) {
       if (panes[i].open == false) {
         return false;
@@ -72,57 +66,73 @@ class App extends Component {
     return true;
   }
 
+  togglePaneOpen(pane_num) {
+    // toggle the pane_num opening in state
+    let {panes} = this.state;
+    panes[pane_num].open = !panes[pane_num].open;
+    this.setState({panes});
+    console.log('panes_state of pane', pane_num, ':', panes[pane_num]);
+  }
+
   collapse(pane_num) {
-    // limit changing to only occur of that pane is set to false.
-    pane_num -= 1; //necessary because react-split-pane numbers starting from 1 not 0...
-    if ((this.state.panes[pane_num].open == false) || this.allTrue(this.state.panes)) {
-
-      if (pane_num == 0) {
-        let pane = document.getElementsByClassName(`Pane${pane_num+1}`)[0];
-        if (this.state.panes[pane_num].open) {
-          let prev_widths = this.state.prev_widths;
-          prev_widths[pane_num] = pane.style.width;
-          this.setState({prev_widths});
-          pane.style.width = '4%';
-        } else {
-          pane.style.width = this.state.prev_widths[pane_num];
-        }
+    // following if statement only allows you to toggle one pane at a time
+    let pane_leftover = '4%';
+    // uncomment following line to have only one pane collapsable at time
+    // [option1] if (this.state.panes[pane_num].open == false || this.allOpen(this.state.panes)) {
+    // [option2] -> next if statement | allows you to have all panes collapsable at a time;
+    if ('multi-collapse' == 'multi-collapse') {
+      switch (pane_num) {
+        case 0:
+          // console.log('toggling pane 1');
+          let pane = document.getElementsByClassName(`Pane${pane_num+1}`)[0];
+          if (this.state.panes[pane_num].open) {
+            let prev_widths = this.state.prev_widths;
+            prev_widths[pane_num] = pane.clientWidth;
+            this.setState({prev_widths});
+            pane.style.width = pane_leftover;
+          } else {
+            // console.log('attempting to set to the previous width in pane 1');
+            pane.style.width = this.state.prev_widths[pane_num];
+          }
+          break;
+        case 1:
+          pane = document.getElementsByClassName(`Pane${pane_num}`)[1];
+          // console.log('toggling pane', pane);
+          if (this.state.panes[pane_num].open) {
+            let prev_widths = this.state.prev_widths;
+            prev_widths[pane_num] = pane.clientWidth;
+            this.setState({prev_widths});
+            pane.style.width = pane_leftover;
+          } else {
+            // console.log('attempting to set to the previous width in pane 2');
+            pane.style.width = this.state.prev_widths[pane_num];
+          }
+          break;
+        case 2:
+          pane = document.getElementsByClassName(`Pane${pane_num-1}`)[1];
+          // console.log('toggling pane', pane);
+          if (this.state.panes[pane_num].open) {
+            let prev_widths = this.state.prev_widths;
+            prev_widths[pane_num] = pane.clientWidth;
+            this.setState({prev_widths});
+            let add_pane = document.getElementsByClassName('Pane2')[1];
+            let new_width = parseInt(pane.clientWidth) + parseInt(add_pane.clientWidth);
+            new_width = `calc(${new_width}px - ${pane_leftover})`;
+            pane.style.width = new_width;
+          } else {
+            // console.log('attempting to set to the previous width of pane 3 (pane2)(pane2) by resetting (pane2)(pane1)');
+            pane.style.width = this.state.prev_widths[pane_num];
+          }
+          break;
       }
-      else if (pane_num == 1){
-        // double the size of the previous pane
-        let pane = document.getElementsByClassName(`Pane${pane_num}`)[0];
-        if (this.state.panes[pane_num].open) {
-          let prev_widths = this.state.prev_widths;
-          prev_widths[pane_num] = pane.style.width;
-          this.setState({prev_widths});
-          let cur_width = pane.clientWidth;
-          let add_width = document.getElementsByClassName(`Pane${pane_num+1}`)[0].clientWidth;
-          let new_width = `${cur_width+add_width}px`;
-          pane.style.width = `calc(${new_width} - 4%)`;
-        } else {
-          pane.style.width = this.state.prev_widths[pane_num];
-        }
-      }
-
-      console.log('panes state', this.state.panes);
-
-
-      let panes = this.state.panes;
-      if (panes[pane_num].open == true) {
-        panes[pane_num].open = false;
-      } else {
-        panes[pane_num].open = true;
-      }
-      this.setState({
-        panes
-      })
+      this.togglePaneOpen(pane_num);
     }
   }
 
   renderButton(id) {
     return (
       <div
-        className='button-toggle'
+        className={`button-toggle ${this.state.panes[id].open ? '' : 'blue'}`}
         onClick={() => this.collapse(id)}
       >
         &#9705;
@@ -144,21 +154,23 @@ class App extends Component {
             Save and Run
           </div>
         </div>
-        {/*<SplitPane
-          defaultSize='33%'
+        <SplitPane
+          defaultSize='33.33%'
           split='vertical'
+          height='100vh'
+          maxSize={-50}
+          minSize={50}
+          className='border panes'
         >
-        <div>
-        </div>*/}
+          <div>
+            MVCode Lessons
+            {this.renderButton(0)}
+          </div>
           <SplitPane
+            defaultSize='50%'
+            maxSize={-50}
+            minSize={50}
             split='vertical'
-            className="border"
-            defaultSize={this.state.size}
-            minSize={75}
-            maxSize={-75}
-            style={{
-              width: '100vw',
-            }}
           >
             <div>
               <AceEditor
@@ -190,7 +202,7 @@ class App extends Component {
               {this.renderButton(2)}
             </div>
           </SplitPane>
-        {/*</SplitPane>*/}
+        </SplitPane>
       </div>
     );
   }
